@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+</head>
+<body>
+<script type="text/javascript">
+$(function(){
+	$('#tree').tree({    
+	    url:'json/tree_data.json',
+	    method:'GET',
+	    lines:true,
+	    onClick: function(node){
+	    	if($('#tree').tree('isLeaf',node.target)){	
+				if ($('#tt').tabs('exists', node.text)){
+					$('#tt').tabs('select', node.text);
+				} else {
+					
+					var content = '<iframe scrolling="no" frameborder="0"  src="'+node.attributes.url+'" style="width:100%;height:99.5%;"></iframe>';
+					$('#tt').tabs('add',{
+						title:node.text,
+						content:content,
+						closable:true,
+						border:false
+					});
+				}
+			}
+		}
+	});
+});
+</script>
+	<ul id="tree"></ul>  
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>User Login</title>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="utils/HJutils.js"></script>
+<link rel="stylesheet" href="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/icon.css" type="text/css"></link>
+<link rel="stylesheet" href="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/default/easyui.css"></link>
+
+<script type="text/javascript">
+	$(function(){
+		//$('#loginForm').bind('input[name = loginName]').focus();
+		$('#dialog').dialog({
+			title:"管理员登录", //标题
+			//iconCls:"icon-ok", //添加图标
+			modal:true, //模式化窗口
+			//top:188, //上边距
+			//left:500, //左边距
+			resizable:true, //是否可以改变对话框窗口大小。
+			//collapsible:true, //是否显示可折叠按钮。
+			//minimizable:true, //是否显示最小化按钮。
+			//maximizable:true, //是否显示最大化按钮。
+			closable:false, //是否显示关闭按钮。
+			width:288, //对话框的宽度
+			height:217, //对话框的高度
+			buttons:[{//按钮
+				text:'登录',
+				iconCls:'icon-ok',
+				handler:function(){
+					//隐藏对话框
+					//$('#dd').dialog('close');
+					$('#loginForm').form({    
+					    url: '/userLogin',
+						success:function(data){    
+					   		var data=eval("("+data+")");
+					   		//console.info(data.success);
+							if(data && data.success){
+								$('#dialog').dialog('destroy');
+								top.location = "/index";
+						    }else{
+						   		$.messager.alert('警告',data.msg,'error'); 
+						   }
+					    }
+					});
+					$('#loginForm').submit();
+				}
+			},{
+				text:'注册',
+				iconCls:'icon-man',
+				handler:function(){
+					//销毁对话框
+					$('#dialog').dialog('destroy');
+				}
+			}],
+			toolbar:[{//工具栏
+				text:'编辑',
+				iconCls:'icon-edit',
+				handler:function(){alert('edit')}
+			},'-',{
+				text:'帮助',
+				iconCls:'icon-help',
+				handler:function(){
+					alert('如需帮助请拨打客服电话：12580')
+					}
+			}]
+		});	
+		$('#dialog').window('center');	
+		$('#loginForm').bind('input').on('keyup',function(event){
+			if(event.keyCode == "13"){
+				/* console.info("9999");
+				if($('#loginForm').form('validate')){
+						$('#loginForm').submit();
+				} */
+				$('#loginForm').form({    
+				    url: '/userLogin',
+					success:function(data){    
+				   		var data=eval("("+data+")");
+						if(data && data.success){
+							$('#dialog').dialog('destroy');
+							top.location = "/index";
+					    }else{
+					   	$.messager.alert('警告',data.msg,'error'); 
+					   }
+				    }
+				});
+				$('#loginForm').submit();
+			}
+		});	
+		$("#login_name").textbox();
+		$("#login_passwd").textbox();
+	});
+</script>
+</head>
+ <body>
+	<div id="dialog">
+		<form id="loginForm" target="_top" method="post" style="padding:10px 20px 10px 40px;" >
+			<p>用户名：<input id="login_name" type="text" name="loginName" class="easyui-validatebox" data-options="required:true" validType="username" /></p>
+			<p>密&nbsp&nbsp&nbsp码：<input id="login_passwd" type="password" name="loginPasswd" class="easyui-validatebox" data-options="required:true" validType="password"/></p>
+			<!-- <p>重复密码：<input type="password" name="repassword" class="easyui-validatebox" data-options="required:true" validType="eqPassword['#loginForm input[name=password]']"/></p>-->
+		 </form>
+	</div>
+</body>
+</html>

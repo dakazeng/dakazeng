@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ldq.emu.dao.CustomerMapper">
+  <resultMap id="BaseResultMap" type="com.ldq.emu.entity.Customer">
+    <id column="cus_id" jdbcType="INTEGER" property="cusId" />
+    <result column="cus_name" jdbcType="VARCHAR" property="cusName" />
+    <result column="cus_sex" jdbcType="VARCHAR" property="cusSex" />
+    <result column="cus_addr" jdbcType="VARCHAR" property="cusAddr" />
+    <result column="cus_tel" jdbcType="VARCHAR" property="cusTel" />
+    <result column="linkman" jdbcType="VARCHAR" property="linkman" />
+    <result column="cus_mail" jdbcType="VARCHAR" property="cusMail" />
+    <result column="creation_time" jdbcType="VARCHAR" property="creationTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cus_id, cus_name, cus_sex, cus_addr, cus_tel, linkman, cus_mail, creation_time
+  </sql>
+  <select id="CustomerList" resultMap="BaseResultMap">
+  	select * from customer where 1 = 1 
+  	<if test="cusName != null and cusName != ''">
+        and cus_name like "%${cusName}%"
+    </if>
+    <if test="creatDateStart != null and creatDateStart != '' and creatDateEnd != null and creatDateEnd != ''">
+    	and customer.creation_time Between "${creatDateStart}" And "${creatDateEnd}"
+    </if>
+  </select>
+  <select id="cusCombobox" resultMap="BaseResultMap">
+  	select * from Customer
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from customer
+    where cus_id = #{cusId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from customer
+    where cus_id = #{cusId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ldq.emu.entity.Customer">
+    insert into customer (cus_id, cus_name, cus_sex, 
+      cus_addr, cus_tel, linkman, 
+      cus_mail, creation_time)
+    values (#{cusId,jdbcType=INTEGER}, #{cusName,jdbcType=VARCHAR}, #{cusSex,jdbcType=VARCHAR}, 
+      #{cusAddr,jdbcType=VARCHAR}, #{cusTel,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, 
+      #{cusMail,jdbcType=VARCHAR}, #{creationTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ldq.emu.entity.Customer">
+    insert into customer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cusId != null">
+        cus_id,
+      </if>
+      <if test="cusName != null">
+        cus_name,
+      </if>
+      <if test="cusSex != null">
+        cus_sex,
+      </if>
+      <if test="cusAddr != null">
+        cus_addr,
+      </if>
+      <if test="cusTel != null">
+        cus_tel,
+      </if>
+      <if test="linkman != null">
+        linkman,
+      </if>
+      <if test="cusMail != null">
+        cus_mail,
+      </if>
+      <if test="creationTime != null">
+        creation_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cusId != null">
+        #{cusId,jdbcType=INTEGER},
+      </if>
+      <if test="cusName != null">
+        #{cusName,jdbcType=VARCHAR},
+      </if>
+      <if test="cusSex != null">
+        #{cusSex,jdbcType=VARCHAR},
+      </if>
+      <if test="cusAddr != null">
+        #{cusAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="cusTel != null">
+        #{cusTel,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null">
+        #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="cusMail != null">
+        #{cusMail,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null">
+        #{creationTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ldq.emu.entity.Customer">
+    update customer
+    <set>
+      <if test="cusName != null">
+        cus_name = #{cusName,jdbcType=VARCHAR},
+      </if>
+      <if test="cusSex != null">
+        cus_sex = #{cusSex,jdbcType=VARCHAR},
+      </if>
+      <if test="cusAddr != null">
+        cus_addr = #{cusAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="cusTel != null">
+        cus_tel = #{cusTel,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null">
+        linkman = #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="cusMail != null">
+        cus_mail = #{cusMail,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null">
+        creation_time = #{creationTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cus_id = #{cusId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ldq.emu.entity.Customer">
+    update customer
+    set cus_name = #{cusName,jdbcType=VARCHAR},
+      cus_sex = #{cusSex,jdbcType=VARCHAR},
+      cus_addr = #{cusAddr,jdbcType=VARCHAR},
+      cus_tel = #{cusTel,jdbcType=VARCHAR},
+      linkman = #{linkman,jdbcType=VARCHAR},
+      cus_mail = #{cusMail,jdbcType=VARCHAR},
+      creation_time = #{creationTime,jdbcType=VARCHAR}
+    where cus_id = #{cusId,jdbcType=INTEGER}
+  </update>
+</mapper>

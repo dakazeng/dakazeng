@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ldq.emu.dao.EmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.ldq.emu.entity.Employee">
+    <id column="emp_id" jdbcType="INTEGER" property="empId" />
+    <result column="emp_name" jdbcType="VARCHAR" property="empName" />
+    <result column="emp_sex" jdbcType="VARCHAR" property="empSex" />
+    <result column="emp_age" jdbcType="VARCHAR" property="empAge" />
+    <result column="emp_tel" jdbcType="VARCHAR" property="empTel" />
+    <result column="emp_addr" jdbcType="VARCHAR" property="empAddr" />
+    <result column="emp_mail" jdbcType="VARCHAR" property="empMail" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
+    <result column="is_delete" jdbcType="VARCHAR" property="isDelete" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="dno" jdbcType="INTEGER" property="dno" />
+    <result column="creation_time" jdbcType="TIMESTAMP" property="creationTime" />
+  </resultMap>
+  <resultMap id="employeeCustomMap" type="com.ldq.emu.entity.EmployeeCustom" extends="BaseResultMap">
+    <result column="dep_name" jdbcType="VARCHAR" property="depName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    emp_id, emp_name, emp_sex, emp_age, emp_tel, emp_addr, emp_mail, file_path, is_delete, 
+    position, dno, creation_time
+  </sql> 
+  <select id="selectByDno" resultMap="BaseResultMap">
+  	select * from Employee where 1 = 1 and dno = #{dno}
+  </select>
+  <select id="employeeList" resultMap="employeeCustomMap">
+  	select 
+  		employee.*,
+  		department.dep_name 
+	from 
+		employee left join department 
+		on employee.dno = department.dep_id
+  	where 1 = 1 
+  	<if test="empName != null and empName != ''">
+        and emp_name like "%${empName}%"
+    </if>
+    <if test="creatDateStart != null and creatDateStart != '' and creatDateEnd != null and creatDateEnd != ''">
+    	and employee.creation_time Between "${creatDateStart}" And "${creatDateEnd}"
+    </if>
+  </select>
+  <select id="empCombobox" resultMap="BaseResultMap">
+  	select * from employee
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from employee
+    where emp_id = #{empId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from employee
+    where emp_id = #{empId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ldq.emu.entity.Employee">
+    insert into employee (emp_id, emp_name, emp_sex, 
+      emp_age, emp_tel, emp_addr, 
+      emp_mail, file_path, is_delete, 
+      position, dno, creation_time
+      )
+    values (#{empId,jdbcType=INTEGER}, #{empName,jdbcType=VARCHAR}, #{empSex,jdbcType=VARCHAR}, 
+      #{empAge,jdbcType=VARCHAR}, #{empTel,jdbcType=VARCHAR}, #{empAddr,jdbcType=VARCHAR}, 
+      #{empMail,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, #{isDelete,jdbcType=VARCHAR}, 
+      #{position,jdbcType=VARCHAR}, #{dno,jdbcType=INTEGER}, #{creationTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ldq.emu.entity.Employee">
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        emp_id,
+      </if>
+      <if test="empName != null">
+        emp_name,
+      </if>
+      <if test="empSex != null">
+        emp_sex,
+      </if>
+      <if test="empAge != null">
+        emp_age,
+      </if>
+      <if test="empTel != null">
+        emp_tel,
+      </if>
+      <if test="empAddr != null">
+        emp_addr,
+      </if>
+      <if test="empMail != null">
+        emp_mail,
+      </if>
+      <if test="filePath != null">
+        file_path,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="dno != null">
+        dno,
+      </if>
+      <if test="creationTime != null">
+        creation_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="empId != null">
+        #{empId,jdbcType=INTEGER},
+      </if>
+      <if test="empName != null">
+        #{empName,jdbcType=VARCHAR},
+      </if>
+      <if test="empSex != null">
+        #{empSex,jdbcType=VARCHAR},
+      </if>
+      <if test="empAge != null">
+        #{empAge,jdbcType=VARCHAR},
+      </if>
+      <if test="empTel != null">
+        #{empTel,jdbcType=VARCHAR},
+      </if>
+      <if test="empAddr != null">
+        #{empAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="empMail != null">
+        #{empMail,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null">
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="dno != null">
+        #{dno,jdbcType=INTEGER},
+      </if>
+      <if test="creationTime != null">
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ldq.emu.entity.Employee">
+    update employee
+    <set>
+      <if test="empName != null">
+        emp_name = #{empName,jdbcType=VARCHAR},
+      </if>
+      <if test="empSex != null">
+        emp_sex = #{empSex,jdbcType=VARCHAR},
+      </if>
+      <if test="empAge != null">
+        emp_age = #{empAge,jdbcType=VARCHAR},
+      </if>
+      <if test="empTel != null">
+        emp_tel = #{empTel,jdbcType=VARCHAR},
+      </if>
+      <if test="empAddr != null">
+        emp_addr = #{empAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="empMail != null">
+        emp_mail = #{empMail,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null">
+        file_path = #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="dno != null">
+        dno = #{dno,jdbcType=INTEGER},
+      </if>
+      <if test="creationTime != null">
+        creation_time = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where emp_id = #{empId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ldq.emu.entity.Employee">
+    update employee
+    set emp_name = #{empName,jdbcType=VARCHAR},
+      emp_sex = #{empSex,jdbcType=VARCHAR},
+      emp_age = #{empAge,jdbcType=VARCHAR},
+      emp_tel = #{empTel,jdbcType=VARCHAR},
+      emp_addr = #{empAddr,jdbcType=VARCHAR},
+      emp_mail = #{empMail,jdbcType=VARCHAR},
+      file_path = #{filePath,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      dno = #{dno,jdbcType=INTEGER},
+      creation_time = #{creationTime,jdbcType=TIMESTAMP}
+    where emp_id = #{empId,jdbcType=INTEGER}
+  </update>
+</mapper>

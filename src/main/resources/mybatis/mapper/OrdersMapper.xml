@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ldq.emu.dao.OrdersMapper">
+	<resultMap id="BaseResultMap" type="com.ldq.emu.entity.Orders">
+		<id column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_name" jdbcType="VARCHAR"
+			property="orderName" />
+		<result column="order_number" jdbcType="VARCHAR"
+			property="orderNumber" />
+		<result column="end_edit_time" jdbcType="VARCHAR"
+			property="endEditTime" />
+		<result column="order_price" jdbcType="VARCHAR"
+			property="orderPrice" />
+		<result column="order_info" jdbcType="VARCHAR"
+			property="orderInfo" />
+		<result column="pay_method" jdbcType="VARCHAR"
+			property="payMethod" />
+		<result column="company" jdbcType="VARCHAR" property="company" />
+		<result column="is_pay" jdbcType="VARCHAR" property="isPay" />
+		<result column="pay_time" jdbcType="VARCHAR" property="payTime" />
+		<result column="creation_time" jdbcType="VARCHAR"
+			property="creationTime" />
+		<result column="cno" jdbcType="INTEGER" property="cno" />
+		<result column="eno" jdbcType="INTEGER" property="eno" />
+		<result column="dno" jdbcType="INTEGER" property="dno" />
+	</resultMap>
+	<resultMap id="ordersCustomMap" extends="BaseResultMap"  type="com.ldq.emu.entity.OrdersCustom">
+		<result column="emp_id" jdbcType="INTEGER" property="empId" />
+		<result column="emp_Name" jdbcType="VARCHAR" property="empName" />
+		<result column="dep_Name" jdbcType="VARCHAR" property="depName" />
+		<result column="cus_id" jdbcType="INTEGER" property="cusId" />
+		<result column="cus_Name" jdbcType="VARCHAR" property="cusName" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		order_id, order_name, order_number, end_edit_time,
+		order_price, order_info,
+		pay_method,
+		company, is_pay, pay_time,
+		creation_time, cno, eno, dno
+	</sql>
+	<select id="selectByCno" resultMap="BaseResultMap">
+		select * from Orders where 1 = 1 and cno = #{cno}
+	</select>
+	<select id="selectByEno" resultMap="BaseResultMap">
+		select * from Orders where 1 = 1 and eno = #{eno}
+	</select>
+	<select id="selectByDno" resultMap="BaseResultMap">
+		select * from Orders where 1 = 1 and dno = #{dno}
+	</select>
+	<select id="orderList" resultMap="ordersCustomMap">
+		select
+			orders.*,
+			employee.emp_name,
+			employee.emp_id,
+			department.dep_name,
+			customer.cus_name,
+			customer.cus_id
+		from
+			orders,
+			employee,
+			department,
+			customer
+		where
+			orders.eno = employee.emp_id
+			and orders.dno = department.dep_id
+			and orders.cno = customer.cus_id
+		<if test="orderName != null and orderName != ''">
+			and order_name like "%${orderName}%" 
+		</if>
+		<if test="isPay != null and isPay != ''">
+			and is_pay = "${isPay}" 
+		</if>
+		<if test="cno != null and cno != ''">
+			and cno = ${cno} 
+		</if>
+	</select>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from orders
+		where order_id = #{orderId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from orders
+		where order_id =
+		#{orderId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.ldq.emu.entity.Orders">
+		insert into orders (order_id,
+		order_name, order_number,
+		end_edit_time, order_price, order_info,
+		pay_method, company, is_pay,
+		pay_time, creation_time, cno,
+		eno, dno)
+		values (#{orderId,jdbcType=INTEGER}, #{orderName,jdbcType=VARCHAR},
+		#{orderNumber,jdbcType=VARCHAR},
+		#{endEditTime,jdbcType=VARCHAR},
+		#{orderPrice,jdbcType=VARCHAR}, #{orderInfo,jdbcType=VARCHAR},
+		#{payMethod,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR},
+		#{isPay,jdbcType=VARCHAR},
+		#{payTime,jdbcType=VARCHAR},
+		#{creationTime,jdbcType=VARCHAR}, #{cno,jdbcType=INTEGER},
+		#{eno,jdbcType=INTEGER}, #{dno,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.ldq.emu.entity.Orders">
+		insert into orders
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orderId != null">
+				order_id,
+			</if>
+			<if test="orderName != null">
+				order_name,
+			</if>
+			<if test="orderNumber != null">
+				order_number,
+			</if>
+			<if test="endEditTime != null">
+				end_edit_time,
+			</if>
+			<if test="orderPrice != null">
+				order_price,
+			</if>
+			<if test="orderInfo != null">
+				order_info,
+			</if>
+			<if test="payMethod != null">
+				pay_method,
+			</if>
+			<if test="company != null">
+				company,
+			</if>
+			<if test="isPay != null">
+				is_pay,
+			</if>
+			<if test="payTime != null">
+				pay_time,
+			</if>
+			<if test="creationTime != null">
+				creation_time,
+			</if>
+			<if test="cno != null">
+				cno,
+			</if>
+			<if test="eno != null">
+				eno,
+			</if>
+			<if test="dno != null">
+				dno,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="orderId != null">
+				#{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderName != null">
+				#{orderName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNumber != null">
+				#{orderNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="endEditTime != null">
+				#{endEditTime,jdbcType=VARCHAR},
+			</if>
+			<if test="orderPrice != null">
+				#{orderPrice,jdbcType=VARCHAR},
+			</if>
+			<if test="orderInfo != null">
+				#{orderInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="payMethod != null">
+				#{payMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				#{company,jdbcType=VARCHAR},
+			</if>
+			<if test="isPay != null">
+				#{isPay,jdbcType=VARCHAR},
+			</if>
+			<if test="payTime != null">
+				#{payTime,jdbcType=VARCHAR},
+			</if>
+			<if test="creationTime != null">
+				#{creationTime,jdbcType=VARCHAR},
+			</if>
+			<if test="cno != null">
+				#{cno,jdbcType=INTEGER},
+			</if>
+			<if test="eno != null">
+				#{eno,jdbcType=INTEGER},
+			</if>
+			<if test="dno != null">
+				#{dno,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.ldq.emu.entity.Orders">
+		update orders
+		<set>
+			<if test="orderName != null">
+				order_name = #{orderName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNumber != null">
+				order_number = #{orderNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="endEditTime != null">
+				end_edit_time = #{endEditTime,jdbcType=VARCHAR},
+			</if>
+			<if test="orderPrice != null">
+				order_price = #{orderPrice,jdbcType=VARCHAR},
+			</if>
+			<if test="orderInfo != null">
+				order_info = #{orderInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="payMethod != null">
+				pay_method = #{payMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				company = #{company,jdbcType=VARCHAR},
+			</if>
+			<if test="isPay != null">
+				is_pay = #{isPay,jdbcType=VARCHAR},
+			</if>
+			<if test="payTime != null">
+				pay_time = #{payTime,jdbcType=VARCHAR},
+			</if>
+			<if test="creationTime != null">
+				creation_time = #{creationTime,jdbcType=VARCHAR},
+			</if>
+			<if test="cno != null">
+				cno = #{cno,jdbcType=INTEGER},
+			</if>
+			<if test="eno != null">
+				eno = #{eno,jdbcType=INTEGER},
+			</if>
+			<if test="dno != null">
+				dno = #{dno,jdbcType=INTEGER},
+			</if>
+		</set>
+		where order_id = #{orderId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.ldq.emu.entity.Orders">
+		update orders
+		set order_name =
+		#{orderName,jdbcType=VARCHAR},
+		order_number =
+		#{orderNumber,jdbcType=VARCHAR},
+		end_edit_time =
+		#{endEditTime,jdbcType=VARCHAR},
+		order_price =
+		#{orderPrice,jdbcType=VARCHAR},
+		order_info =
+		#{orderInfo,jdbcType=VARCHAR},
+		pay_method =
+		#{payMethod,jdbcType=VARCHAR},
+		company = #{company,jdbcType=VARCHAR},
+		is_pay = #{isPay,jdbcType=VARCHAR},
+		pay_time =
+		#{payTime,jdbcType=VARCHAR},
+		creation_time =
+		#{creationTime,jdbcType=VARCHAR},
+		cno = #{cno,jdbcType=INTEGER},
+		eno =
+		#{eno,jdbcType=INTEGER},
+		dno = #{dno,jdbcType=INTEGER}
+		where order_id =
+		#{orderId,jdbcType=INTEGER}
+	</update>
+</mapper>

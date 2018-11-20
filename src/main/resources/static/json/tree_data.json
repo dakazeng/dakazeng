@@ -1,0 +1,39 @@
+[{    
+    "id":1,    
+    "text":"权限管理",    
+    "state":"open",  
+    "children":[{    
+        "text":"用户管理",    
+        "attributes":{    
+            "url":"user/list.html"
+        } 
+    }]    
+},{    
+    "text":"人力管理",    
+    "state":"open",    
+    "children":[{    
+        "text":"员工管理",
+        "attributes":{    
+            "url":"employee/list.html"
+        }
+    },{    
+        "text":"部门管理",
+        "attributes":{    
+            "url":"department/list.html"
+        }   
+    }]    
+},{    
+    "text":"业务管理",    
+    "state":"open",    
+    "children":[{    
+        "text":"客户管理",
+        "attributes":{    
+            "url":"customer/list.html"
+        }   
+    },{    
+        "text":"订单管理",
+        "attributes":{    
+            "url":"orders/list.html"
+        }   
+    }]    
+}]

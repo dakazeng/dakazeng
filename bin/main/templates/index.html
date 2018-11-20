@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base href="<%=basePath%>">
+<meta charset="UTF-8">
+<title>欢迎使用EMU管理系统~~</title>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/locale/easyui-lang-zh_CN.js"></script>
+<link rel="stylesheet" href="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/icon.css" type="text/css"></link>
+<link rel="stylesheet" href="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/default/easyui.css"></link>
+<script type="text/javascript" src="utils/HJutils.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+});
+function logout(){
+	$.messager.confirm('确认','您确定要注销吗？',function(r){    
+	    if (r){    
+	    	location.href = "/logout";
+	    }    
+	});  
+}
+
+function loginH5(){
+	top.location = "/login.html";
+}
+
+function userInfo(){
+	
+	$('#userDialog').dialog({    
+	    title: '管理员信息',    
+	    width: 400,    
+	    height: 260,    
+	    closed: false,    
+	    cache: false,    
+	    modal: true,
+	    buttons:[{
+			text:'修改',
+			iconCls:'icon-ok',
+			handler:function(){
+				$('#userForm').form({    
+				    url: '/updUserPasswd',
+					success:function(data){    
+				   		var data=eval("("+data+")");
+						if(data && data.success){
+							$('#userDialog').dialog('close');
+							//$('#userForm').find('input').val('');
+							$.messager.show({
+								msg:data.msg,
+								showType:'fade',
+								closable: false,
+								timeout:800,
+								style:{
+									center:document.body.scrollTop+document.documentElement.scrollTop
+								}
+							});
+					    }else{
+					    	$.messager.progress();
+					   		$.messager.alert('警告',data.msg,'error'); 
+					   }
+				    }
+				});
+				$('#userForm').submit();
+			}
+		},{
+			text:'关闭',
+			handler:function(){
+				//关闭对话框
+				$('#userDialog').dialog('close');
+			}
+		}]
+	});    
+}
+</script>
+</head>
+
+<body class="easyui-layout">
+	<div id="userDialog">
+		<form id="userForm" target="_top" method="post" style="padding:10px 20px 10px 80px;" >
+			<!-- $('#formId')[0].reset();
+			<input type="reset" style="display:none;" /> -->
+			<p>用户名：<input type="text" class="easyui-textbox" id="loginName" name="loginName" th:value="${session.user.loginName}" readonly /></p>
+			<p>旧密码：<input type="password" class="easyui-textbox" id="oldLoginPasswd" name="oldLoginPasswd" data-options="required:true" validType="password"/></p>
+			<p>新密码：<input type="password" class="easyui-textbox" id="loginPasswd" name="loginPasswd" data-options="required:true" validType="password"/></p>
+			<p>确认密码：<input type="password" class="easyui-textbox" id="repassword" name="repassword" data-options="required:true" validType="eqPassword['#userForm input[name=loginPasswd]']"/></p>
+		</form>
+	</div> 
+    <div data-options="region:'north',split:false,href:'layout/north.html'" style="height:136px;"></div>   
+    <div data-options="region:'south',split:false,href:'layout/south.html'" style="height:38px;"></div>   
+    <div data-options="region:'east',iconCls:'icon-man',title:'在线用户列表',split:true" style="width:130px;">
+    	<div th:if="${session.user != null}">
+	    	online：<a href="javascript:void(0);" th:text="${session.user.userName}" onClick="userInfo()"/>
+	    	<a href="javascript:void(0);" onClick="logout()">注销</a>
+    	</div>
+    	<div th:if="${session.user == null}">
+			<a href="javascript:void(0);" onClick="loginH5()">请登录</a>
+   		</div>
+    </div>   
+    <div data-options="region:'west',iconCls:'icon-tip',title:'系统菜单',split:false,href:'layout/menu.html'" style="width:114px;"></div>   
+    <div data-options="region:'center',title:'欢迎使用EMU管理系统~~'">
+    
+    	<div id="tt" class="easyui-tabs" fit="true" border="false">
+			<div title="首页" border="false" fit="true" style="padding:10px 400px;">
+		    	<div th:if="${session.user != null}">
+			    	<h1 style="text-align:center" >登录成功，欢迎使用EMU管理系统~</h1>
+		    	</div>
+		    	<div th:if="${session.user == null}">
+			    	<h1 style="text-align:center" >尚未登录，请登录~</h1>
+		    	</div>
+			</div>
+		</div>
+    </div>   
+</body> 
+</html>

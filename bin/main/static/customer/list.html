@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.min.js"></script>
+<script type="text/javascript" src="../webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/locale/easyui-lang-zh_CN.js"></script>
+<link rel="stylesheet" href="../webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/icon.css" type="text/css"></link>
+<link rel="stylesheet" href="../webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/default/easyui.css"></link>
+<script type="text/javascript" src="../utils/HJutils.js"></script>
+<script type="text/javascript">
+	$(function(){
+		var editRow = undefined;
+		$('#dg').datagrid({  
+			border:false,
+			fit:true,  
+			url:'/customerList',
+			method:'POST',
+			striped: true,
+			rownumbers: true,
+			fitColumns:true,
+			pagination:true,
+			iconCls:'icon-save',
+			sortName:"cusId",
+			sortOrder:"desc",
+		    columns:[[{
+		    	field:'cusId',
+		    	title:'客户id',
+		    	width:100,
+		    	sortable : true,
+		    	checkbox:true
+		    },{
+		        field:'cusName',
+		       	title:'姓名',
+		       	align:'center',
+		        width:100,
+		        //sortable : true,
+		        editor:{
+		        	type:'validatebox',
+		        	options:{
+		        		validType:'CHS',
+		        		required:true
+		        	}
+		        }
+		    },{
+		        field:'cusSex',
+		       	title:'性别',
+		       	align:'center',
+		        width:100,
+		       // sortable : true,
+		      	editor:{
+			       	type:'combobox',
+		        	options:{
+		        		valueField: 'value',
+		        		textField: 'text',
+		        		data: [{
+		        			value: '男',
+		        			text: '男'
+		        		},{
+		        			value: '女',
+		        			text: '女'
+		        		}],
+						panelHeight: 'auto',
+						editable:false,
+		        		required:true
+	        		}
+		      	}
+		    },{
+			    field:'cusAddr',
+			    title:'地址',
+			    width:100,
+			    align:'center',
+		    	editor:{
+	        		type:'validatebox',
+	        		options:{
+	        	    	required:true
+	        	}
+	        }
+		    },{
+		        field:'linkman',
+		       	title:'联系人',
+		       	align:'center',
+		        width:100,
+		        //sortable : true,
+		        editor:{
+		        	type:'validatebox',
+		        	options:{
+		        	  validType:'CHS',
+		        	  required:true
+		        	}
+		        }
+		    },{
+		        field:'cusTel',
+		       	title:'电话',
+		       	align:'center',
+		        width:100,
+		        //sortable : true,
+		        editor:{
+		        	type:'validatebox',
+		        	options:{
+		        		validType:'phoneAndMobile',
+		        		required:true
+		        	}
+		        }
+		    },{
+		        field:'cusMail',
+		       	title:'邮箱',
+		       	align:'center',
+		        width:100,
+		        //sortable : true,
+		        editor:{
+		        	type:'validatebox',
+		        	options:{
+		        		validType: 'email',
+		        		required:true
+		        	}
+		        }
+		    },{
+		        field:'creationTime',
+		       	title:'创建时间',
+		       	align:'center',
+		        width:100,
+		        //sortable : true,
+		        editor:{
+		        	type:'datebox',
+		        	options:{
+		        		required:true,
+		        		editable:false
+		        	}
+		        }
+		    }]],
+		    toolbar: [{
+				text:'添加',
+				iconCls: 'icon-add',
+				handler: function(){
+					if(editRow != undefined){
+						$('#dg').datagrid('endEdit',editRow);
+					}
+					if(editRow == undefined){
+ 						$('#dg').datagrid('addEditor',{
+							field:'creationTime',
+							editor:{
+					        	type:'datebox',
+					        	options:{
+					        		required:true,
+					        		editable:false
+					        	}
+					        }
+						});
+						$('#dg').datagrid('insertRow',{
+							index:0,
+							row:{
+							}
+						});
+						$('#dg').datagrid('beginEdit',0);
+						editRow = 0;
+					}
+				}
+			},'-',{
+				text:'删除',
+				iconCls: 'icon-remove',
+				handler: function(){
+					var rows = $('#dg').datagrid('getSelections');
+					if(rows.length > 0){
+						$.messager.confirm('提示','确定要删除的所选用户吗？',function(msg){
+							if(msg){
+								var id = [];
+								for(var i =0; i<rows.length; i++){
+									id.push(rows[i].cusId);
+								}
+								console.info(id.join(','));
+								$.ajax({
+									url : '/delCustomer',
+									data : {
+										cusId : id.join(',')
+									},
+									success : function(msg){
+										
+										if(msg && msg.success){
+											$.messager.show({
+												msg : msg.msg,
+												title : '提示',
+												timeout:5000,
+												showType:'slide'
+											});
+										}else{
+											$.messager.alert('提示',msg.msg,'error');
+										}
+										$('#dg').datagrid('load');
+										$('#dg').datagrid('uncheckAll');
+									}
+								});
+							}
+						});
+					}else{
+						$.messager.alert('提示','请选择要删除的用户','warning');
+					}
+				}
+			},'-',{
+				text:'编辑',
+				iconCls: 'icon-edit',
+				handler: function(){
+					var rows = $('#dg').datagrid('getSelections');
+					if(rows.length == 1){
+						$('#dg').datagrid('removeEditor','creationTime');
+						if(editRow != undefined){
+							$('#dg').datagrid('endEdit',editRow);
+							editRow = undefined;
+						}
+						if(editRow == undefined){
+							var index = $('#dg').datagrid('getRowIndex',rows[0]);
+							$('#dg').datagrid('beginEdit',index);
+							editRow = index;
+							$('#dg').datagrid('uncheckAll');
+						}
+					}
+				}
+			},'-',{
+				text:'保存',
+				iconCls: 'icon-save',
+				handler: function(){
+					$('#dg').datagrid('endEdit',editRow);
+				}
+			},'-',{
+				text:'取消编辑',
+				iconCls: 'icon-redo',
+				handler: function(){
+					$('#dg').datagrid('rejectChanges');
+					$('#dg').datagrid('uncheckAll');
+					editRow = undefined;
+				}
+			},'-'],
+			onAfterEdit:function(rowIndex, rowData, changes){
+				//rowIndex：上一次结束编辑的索引，rowData：上一次编辑的整条数据，changes：仅上一次修改的数据
+				var inserted = $('#dg').datagrid('getChanges','inserted');
+				var updated = $('#dg').datagrid('getChanges','updated');
+				var url = '';
+				if(inserted.length > 0){
+					url = '/addCustomer';
+				}
+				if(updated.length > 0){
+					url = '/updCustomer';
+				}
+				$.ajax({
+					url : url,
+					data : rowData,
+					dataType : 'json',
+					success : function(msg){
+						if(msg && msg.success){
+							$('#dg').datagrid('acceptChanges');
+							$.messager.show({
+								msg : msg.msg,
+								title : '成功'
+							});
+						}else{
+							$('#dg').datagrid('rejectChanges');
+							$.messager.alert('错误',msg.msg,'error');
+						}
+						//editRow = undefined;
+					}
+				});
+				editRow = undefined;
+				$('#dg').datagrid('uncheckAll');
+			},
+			onDblClickRow:function(rowIndex, rowData){
+				$('#dg').datagrid('removeEditor','creationTime');
+				/* if(editRow != undefined){
+					$('#dg').datagrid('endEdit',editRow);
+					editRow = undefined;
+				} */
+				if(editRow == undefined){
+					$('#dg').datagrid('beginEdit',rowIndex);
+					editRow = rowIndex;
+					$('#dg').datagrid('uncheckAll');
+				}
+			}		
+		});  
+	});
+
+	function conditionSearch(){
+		$('#dg').datagrid('load',serializeObject($('#search')));
+		console.info(serializeObject($('#search')));
+	};
+	function cleanCondition(){
+		$('#dg').datagrid('load',{});
+		$('#search').find('input').val('');
+	};
+</script>
+</head>
+<body>
+<div id="userLayout" class="easyui-layout" data-options="fit:true" >   
+	    <div data-options="region:'north',title:'条件查询',split:false,border:false" style="height:85px;overflow:hidden;">
+	    	<form id="search" method="post">
+	    		<table class="datagrid-toolbar" style="width:100%;height:100%;">
+		    		<tr>
+		    			<td>按客户名称：<input type="text" class="easyui-textbox" name="cusName" style="width:320px;"/></td>
+		    		</tr>
+		    		<tr>
+		    			<td>创建时间：<input name="creatDateStart" class="easyui-datebox" data-options="editable:false" style="width:155px;"/>至
+		    			<input name="creatDateEnd" class="easyui-datebox" data-options="editable:false" style="width:155px;"/>
+		    			<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="conditionSearch();">查询</a>
+		    			<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-clear'" onclick="cleanCondition();" title="清空所有条件，显示所有用户">清空</a>
+		    			</td>
+		    		</tr>
+	    		</table>
+	    	</form>
+	    </div>   
+	    <div data-options="region:'center',title:'用户列表',border:false">
+			<table id="dg"></table> 
+		</div> 
+    </div>
+</body>
+</html>

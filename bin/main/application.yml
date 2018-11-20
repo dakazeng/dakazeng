@@ -1,0 +1,28 @@
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/emu
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml #注意：一定要对应mapper映射xml文件的所在路径
+  type-aliases-package: com.ldq.emu.entity  # 注意：对应实体类的路径
+  configLocation: classpath:mybatis/sqlMapConfig.xml
+mapper:
+  mappers: com.ldq.emu.dao
+ 
+logging:
+  level:
+    com.ldq.emu.dao: DEBUG
+
+securityurl:
+  skipUrl:
+    - /login.html
+    - /userLogin
+    - /webjars/**
+    - /utils/**
+    - /layout/**
+    - /json/**

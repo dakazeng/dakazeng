@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/locale/easyui-lang-zh_CN.js"></script>
+<link rel="stylesheet" href="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/icon.css" type="text/css"></link>
+<link rel="stylesheet" href="webjars/github-com-novaeye-jquery-easyui-bower/1.5.0.1/themes/default/easyui.css"></link>
+<script type="text/javascript" src="utils/HJutils.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$.ajax({ 
+			url: "/userLogin", 
+			context: document.body, 
+			success: function(data){
+		   	  //$(this).addClass("done");
+		   	  	//var data=eval("("+data+")");
+				//data = $.parseJSON(data);
+				$('loginForm').submit();
+		   	  console.info(data);
+		}});
+	});
+</script>
+</head>
+<body>
+<div id="dialog">
+		<form id="loginForm" method="post">
+			<table>
+				<tr>
+					<th align="right">用户名：</th>
+					<td align="left">
+						<input id="login_name" value = "admin3306" type="text" name="loginName" class="easyui-validatebox" data-options="required:true" validType="username" />
+					<td>
+				</tr>
+				<tr>
+					<th align="right">密码：</th>
+					<td align="left">
+						<input value = "admin3306" type="password" name="loginPasswd" class="easyui-validatebox" data-options="required:true" />
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<input type="button" name="login" value ="login" id="loginbutton" />
+					</td>
+				</tr>
+			</table>
+		 </form>
+	</div>
+  </body>
+</body>
+</html>
